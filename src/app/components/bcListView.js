@@ -20,11 +20,12 @@ class BlockFeed extends React.Component {
   
   getData = (callback) => {
     let that = this;
+    setTimeout(() => {
     getAllData().then(response => {
-      console.log(response)
+      console.log(JSON.stringify(response))
 
-      if(response !== that.state.data){
-        that.setState({data: response.reverse()});
+      if(response['rx'] !== that.state.data){
+        that.setState({data: response['rx'].reverse()});
       }
       that.getData();
 
@@ -32,6 +33,7 @@ class BlockFeed extends React.Component {
       console.log(error);
       return error;
     });
+  }, 6000);
   }
 
   componentWillMount() {
@@ -41,6 +43,7 @@ class BlockFeed extends React.Component {
       });
     });
   }
+
   handleInfiniteOnLoad = () => {
     let data = this.state.data;
     this.setState({
@@ -71,13 +74,13 @@ class BlockFeed extends React.Component {
           <List
             dataSource={this.state.data}
             renderItem={item => (
-              <List.Item key={item.ID}>
+              <List.Item key={item.rxid}>
                 <List.Item.Meta
-                  avatar={<Avatar shape="square" size="large" style={{ backgroundColor: '#e00000'}} icon={'heart-o'} />}
-                  title={"Heart Rate for ID: "+item.Value.id}
-                  description={"Timestamp: " + (new Date(item.Timestamp).toLocaleString())}
+                  avatar={<Avatar shape="square" size="large" style={item.status === 'prescribed' ? { backgroundColor: '#D1B829'} : { backgroundColor: '#307351'}} icon={item.status === 'prescribed' ? 'solution' : 'medicine-box'} />}
+                  title={item.rxid}
+                  description={"Timestamp: " + (new Date(item.timestamp).toLocaleString())}
                 />
-                <div>{"Heart Rate: " + item.Value.heartRate + " " + item.Value.unit}</div>
+                <div>{"Status: " + item.status}</div>
               </List.Item>
             )}
           >
