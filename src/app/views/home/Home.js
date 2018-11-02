@@ -71,7 +71,7 @@ class Home extends PureComponent {
         <Row>
             <Col span={12} offset={6}>
           <h1 className="headerTitle">
-            Medical Device Console
+            Rx Ledger
           </h1>
           </Col>  
           </Row>
