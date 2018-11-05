@@ -6,7 +6,7 @@ import reqwest from 'reqwest';
 
 import InfiniteScroll from 'react-infinite-scroller';
 
-import {getAllData} from '../services/API/blockAPI';
+import {getAllData, getStatus} from '../services/API/blockAPI';
 
 const fakeDataUrl = 'https://randomuser.me/api/?results=5&inc=name,gender,email,nat&noinfo';
 
@@ -27,6 +27,27 @@ class BlockFeed extends React.Component {
       if(response['rx'] !== that.state.data){
         that.setState({data: response['rx'].reverse()});
       }
+
+      getStatus().then(response => {
+        if (response.isHacked !== that.state.isHacked) {
+          that.setState({ isHacked: response.isHacked });
+          if (that.state.isHacked === "true") {
+            notification.open({
+              message: 'Blockchain Integrity Issue',
+              duration: 0,
+              description: 'There was an attempt to manipulate the blockchain. \nAttempt to add out of sequence block.',
+              icon: <Icon type="warning" style={{ color: '#e8f1f5' }} />,
+              style: {
+                backgroundColor: '#D1B829',
+                color: 'white'
+              },
+              key: "isHacked"
+            });
+          }
+        }
+      }).catch(error => {
+        return error;
+      });
       that.getData();
 
     }).catch(error => {
